@@ -639,8 +639,14 @@ impl Settings {
     /// be wrapped up in a separate `RunCommand` struct, which itself includes the commandline to
     /// execute and a few more data.
     pub fn build_command(&self) -> Result<RunCommand, String> {
-        // `--retroarch`
-        let mut command: Command = Command::new(file::to_str(self.retroarch.as_ref()));
+        // `retroarch`
+        let ra_path = file::to_str(self.retroarch.as_ref());
+
+        let mut command: Command = Command::new(&ra_path);
+
+        if ra_path.ends_with("flatpak") {
+            command.args(["run", "org.libretro.RetroArch"]);
+        }
 
         // `game`
         // Get first entry of all games in the list, make it a full path and check if file exists.

@@ -32,7 +32,8 @@ pub fn is_running(process_name: &str, print_pid: bool) -> bool {
 /// accordingly.  The locations are:
 ///     1. `$XDG_CONFIG_HOME/retroarch/retroarch.cfg`
 ///     2. `~/.config/retroarch/retroarch.cfg`
-///     3. `~/.retroarch.cfg`
+///     3. `~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg`
+///     4. `~/.retroarch.cfg`
 /// ... in that order.
 pub fn search_default_config() -> Option<PathBuf> {
     let mut fullpath: PathBuf;
@@ -45,6 +46,11 @@ pub fn search_default_config() -> Option<PathBuf> {
     }
 
     fullpath = PathBuf::from(shellexpand::tilde("~/.config/retroarch/retroarch.cfg").to_string());
+    if fullpath.exists() {
+        return Some(fullpath);
+    }
+
+    fullpath = PathBuf::from(shellexpand::tilde("~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg").to_string());
     if fullpath.exists() {
         return Some(fullpath);
     }
